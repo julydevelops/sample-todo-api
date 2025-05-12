@@ -1,0 +1,2 @@
+aws_lambda_powertools
+pydantic==2.11.3
