@@ -21,8 +21,10 @@ jobs:
         run: |
           docker run --rm \
             -v "$PWD":/var/task \
-            public.ecr.aws/lambda/python:3.12-build \
+            public.ecr.aws/sam/build-python3.12 \
             /bin/bash -c "
+              yum install -y gcc openssl-devel rust cargo && \
+              mkdir -p /var/task/build && \
               pip install --upgrade pip && \
               pip install -r /var/task/requirements.txt -t /var/task/build && \
               cp -r /var/task/src/* /var/task/build/ 2>/dev/null || true && \
