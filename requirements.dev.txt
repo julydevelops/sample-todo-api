@@ -1,0 +1,8 @@
+-r requirements.txt
+boto3
+pytest
+pytest-mock
+pytest-cov
+black
+isort
+flake8
