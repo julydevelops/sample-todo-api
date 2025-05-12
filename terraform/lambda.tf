@@ -5,7 +5,7 @@ data "aws_s3_object" "lambda_zip" {
 
 resource "aws_lambda_function" "todo_handler" {
   function_name = "todo-api"
-  runtime       = "python3.13"
+  runtime       = "python3.12"
   handler       = "handler.lambda_handler"
 
   role = aws_iam_role.todo_lambda.arn

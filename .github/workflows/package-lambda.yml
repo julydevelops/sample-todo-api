@@ -1,47 +1,60 @@
-
 name: Build and Upload Lambda Package
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
+  pull_request:
   workflow_dispatch:
 
 jobs:
   build-and-upload:
     runs-on: ubuntu-latest
+    env:
+      S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+      AWS_REGION:      ${{ secrets.AWS_REGION }}
+
     steps:
-      - name: Checkout code
+      - name: Checkout code  
         uses: actions/checkout@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - name: Set up Python  
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
 
-      - name: Build Lambda package in Amazon Linux Docker
+      - name: Clean previous build artifacts  
+        run: rm -rf build function.zip
+
+      - name: Install dependencies into build/ dir  
         run: |
-          # Build dependencies in Amazon Linux Docker (Python 3.11)
-          docker run --rm \
-            -v "$PWD":/var/task \
-            public.ecr.aws/lambda/python:3.12 \
-            /bin/bash -c "
-              pip install -r requirements.txt -t /var/task/python && \
-              cp -r src/* /var/task/python/ && \
-              cd /var/task/python && \
-              zip -r9 /var/task/function.zip . \
-            "
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt -t build
 
-      - name: Upload Lambda package artifact
-        uses: actions/upload-artifact@v3
+      - name: Copy application code into build/  
+        run: |
+          mkdir -p build
+          cp -r src/* build/ 2>/dev/null || true
+          cp *.py   build/  2>/dev/null || true
+
+      - name: Zip up function.zip  
+        run: |
+          cd build
+          zip -r9 ../function.zip .
+
+      - name: Upload Lambda package artifact  
+        uses: actions/upload-artifact@v4
         with:
           name: lambda-package
           path: function.zip
 
-      - name: Configure AWS credentials
+      - name: Configure AWS credentials  
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-region:            ${{ env.AWS_REGION }}
 
-      - name: Upload Lambda package to S3
+      - name: Upload function.zip to S3  
         run: |
-          aws s3 cp function.zip s3://${{ secrets.S3_BUCKET_NAME }}/${{ github.ref_name }}/function.zip
+          aws s3 cp function.zip \
+            s3://${{ env.S3_BUCKET_NAME }}/${{ github.event.repository.name }}/function.zip
