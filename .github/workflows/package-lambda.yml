@@ -21,16 +21,22 @@ jobs:
         run: |
           docker run --rm \
             -v "$PWD":/var/task \
+            -w /var/task \
             public.ecr.aws/sam/build-python3.12 \
             /bin/bash -c "
+              # 1) Grab compilers
               yum install -y gcc openssl-devel rust cargo && \
-              mkdir -p /var/task/build && \
+              # 2) Make the build folder
+              mkdir -p build && \
+              # 3) Install Python deps into build/
               pip install --upgrade pip && \
-              pip install -r /var/task/requirements.txt -t /var/task/build && \
-              cp -r /var/task/src/* /var/task/build/ 2>/dev/null || true && \
-              cp /var/task/*.py /var/task/build/ 2>/dev/null || true && \
-              cd /var/task/build && \
-              zip -r9 /var/task/function.zip .
+              pip install -r requirements.txt -t build && \
+              # 4) Copy your code
+              cp -r src build/ 2>/dev/null || true && \
+              cp *.py build/ 2>/dev/null || true && \
+              # 5) Zip it up
+              cd build && \
+              zip -r9 ../function.zip .
             "
 
       - name: Upload Lambda package artifact
