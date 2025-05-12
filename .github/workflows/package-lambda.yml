@@ -21,15 +21,14 @@ jobs:
         run: |
           docker run --rm \
             -v "$PWD":/var/task \
-            public.ecr.aws/sam/build-python3.12 \
+            public.ecr.aws/lambda/python:3.12-build \
             /bin/bash -c "
-              mkdir -p /var/task/build && \
               pip install --upgrade pip && \
               pip install -r /var/task/requirements.txt -t /var/task/build && \
               cp -r /var/task/src/* /var/task/build/ 2>/dev/null || true && \
               cp /var/task/*.py /var/task/build/ 2>/dev/null || true && \
               cd /var/task/build && \
-              zip -r9 /var/task/function.zip . \
+              zip -r9 /var/task/function.zip .
             "
 
       - name: Upload Lambda package artifact
