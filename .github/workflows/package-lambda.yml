@@ -19,13 +19,15 @@ jobs:
 
       - name: Build Lambda package in Amazon Linux Docker
         run: |
-          # Build dependencies in Amazon Linux Docker (Python 3.11)
           docker run --rm \
             -v "$PWD":/var/task \
-            public.ecr.aws/lambda/python:3.12 \
+            amazonlinux:2 \
             /bin/bash -c "
-              pip install -r requirements.txt -t /var/task/python && \
-              cp -r src/* /var/task/python/ && \
+              yum install -y python3 zip && \
+              pip3 install --upgrade pip && \
+              pip3 install -r /var/task/requirements.txt -t /var/task/python && \
+              cp -r /var/task/src/* /var/task/python/ 2>/dev/null || true && \
+              cp /var/task/*.py /var/task/python/ 2>/dev/null || true && \
               cd /var/task/python && \
               zip -r9 /var/task/function.zip . \
             "
