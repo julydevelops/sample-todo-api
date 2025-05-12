@@ -20,5 +20,5 @@ variable "lambda_bucket" {
 
 variable "lambda_key" {
   type = string
-  default = "todo-api/function.zip"
+  default = "sample-todo-api/function.zip"
 }
