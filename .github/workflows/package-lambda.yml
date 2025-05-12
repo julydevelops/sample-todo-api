@@ -30,7 +30,7 @@ jobs:
             "
 
       - name: Upload Lambda package artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: lambda-package
           path: function.zip
