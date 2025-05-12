@@ -47,4 +47,4 @@ jobs:
 
       - name: Upload Lambda package to S3
         run: |
-          aws s3 cp function.zip s3://${{ secrets.S3_BUCKET_NAME }}/${{ github.ref_name }}/function.zip
+          aws s3 cp function.zip s3://${{ secrets.S3_BUCKET_NAME }}/${{ github.event.repository.name }}/function.zip
