@@ -21,11 +21,9 @@ jobs:
         run: |
           docker run --rm \
             -v "$PWD":/var/task \
-            amazonlinux:2 \
+            python:3.12-slim \
             /bin/bash -c "
-              yum install -y python3 zip && \
-              pip3 install --upgrade pip && \
-              pip3 install -r /var/task/requirements.txt -t /var/task/python && \
+              pip install -r /var/task/requirements.txt -t /var/task/python && \
               cp -r /var/task/src/* /var/task/python/ 2>/dev/null || true && \
               cp /var/task/*.py /var/task/python/ 2>/dev/null || true && \
               cd /var/task/python && \
