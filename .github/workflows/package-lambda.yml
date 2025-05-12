@@ -21,14 +21,14 @@ jobs:
         run: |
           docker run --rm \
             -v "$PWD":/var/task \
-            python:3.12-slim \
+            public.ecr.aws/sam/build-python3.12 \
             /bin/bash -c "
               apt-get update && apt-get install -y zip && \
               pip install --upgrade pip && \
-              pip install -r /var/task/requirements.txt -t /var/task/python && \
-              cp -r /var/task/src/* /var/task/python/ 2>/dev/null || true && \
-              cp /var/task/*.py /var/task/python/ 2>/dev/null || true && \
-              cd /var/task/python && \
+              pip install -r /var/task/requirements.txt -t /var/task/build && \
+              cp -r /var/task/src/* /var/task/build/ 2>/dev/null || true && \
+              cp /var/task/*.py /var/task/build/ 2>/dev/null || true && \
+              cd /var/task/build && \
               zip -r9 /var/task/function.zip . \
             "
 
