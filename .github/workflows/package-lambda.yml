@@ -17,12 +17,14 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build Lambda package in Amazon Linux Docker
+      - name: Build Lambda package in Python Docker
         run: |
           docker run --rm \
             -v "$PWD":/var/task \
             python:3.12-slim \
             /bin/bash -c "
+              apt-get update && apt-get install -y zip && \
+              pip install --upgrade pip && \
               pip install -r /var/task/requirements.txt -t /var/task/python && \
               cp -r /var/task/src/* /var/task/python/ 2>/dev/null || true && \
               cp /var/task/*.py /var/task/python/ 2>/dev/null || true && \
