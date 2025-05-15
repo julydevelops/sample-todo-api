@@ -57,4 +57,4 @@ jobs:
       - name: Upload function.zip to S3  
         run: |
           aws s3 cp function.zip \
-            s3://${{ env.S3_BUCKET_NAME }}/${{ github.repository }}/function.zip
+            s3://${{ env.S3_BUCKET_NAME }}/${{ github.event.repository.name }}/function.zip
