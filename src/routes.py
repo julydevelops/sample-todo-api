@@ -30,9 +30,12 @@ app.exception_handler(
 )(errors.handle_not_found_error)
 
 
-@app.post('/todos')
+@app.post('/todo')
 def create_todo():
     body = EventBody(**app.current_event.json_body)
+
+    logger.info("Event Received", 
+                extra={"event_body": app.current_event.json_body})
 
     item = {
         'id': str(uuid.uuid4()),
@@ -51,10 +54,8 @@ def create_todo():
     )
 
 
-@app.get('/todos/{todo_id}')
+@app.get('/todo/{todo_id}')
 def get_todo(todo_id):
-    print('hello world!')
-
     # todo_id = app.current_event.path_parameter['todo_id']
 
     response = table.get_item(Key={'id': todo_id})
