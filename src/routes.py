@@ -30,7 +30,7 @@ app.exception_handler(
 )(errors.handle_not_found_error)
 
 
-@app.before()
+@app.not_found()
 def log_request():
     logger.debug("Incoming Request", extra={"event": app.current_event})
 
