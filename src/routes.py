@@ -55,8 +55,10 @@ def create_todo():
 
 
 @app.get('/todo/{todo_id}')
-def get_todo(todo_id):
-    # todo_id = app.current_event.path_parameter['todo_id']
+def get_todo():
+    todo_id = app.current_event.path_parameter['todo_id']
+
+    logger.info("Event Received", extra={"todo_id": todo_id})
 
     response = table.get_item(Key={'id': todo_id})
 
