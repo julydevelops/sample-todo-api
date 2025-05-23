@@ -1,3 +1,4 @@
+import json
 import boto3
 import errors
 import os
@@ -28,11 +29,6 @@ app.exception_handler(ClientError)(errors.handle_dynamodb_error)
 app.exception_handler(
     errors.NotFoundError
 )(errors.handle_not_found_error)
-
-
-@app.not_found()
-def log_request():
-    logger.debug("Incoming Request", extra={"event": app.current_event})
 
 
 @app.post('/todo')
@@ -77,3 +73,8 @@ def get_todo():
         content_type='application/json',
         body=Todo(**response['Item']).model_dump_json()
     )
+
+
+print("ROUTES:", json.dumps([
+    {"method": r["httpMethod"], "path": r["path"]} for r in app._routes
+]))
