@@ -30,6 +30,11 @@ app.exception_handler(
 )(errors.handle_not_found_error)
 
 
+@app.before()
+def log_request():
+    logger.debug("Incoming Request", extra={"event": app.current_event})
+
+
 @app.post('/todo')
 def create_todo():
     body = EventBody(**app.current_event.json_body)
